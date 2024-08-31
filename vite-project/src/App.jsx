@@ -1,34 +1,22 @@
 import React, { useState, useEffect } from 'react';
 
 
-const Exercicio16 = () => {
+const Exercicio13 = () => {
   const [produtos, setProdutos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [categorias, setCategorias] = useState([]);
   const [error, setError] = useState(null);
-  const [selectedCategory,setSelectedCategory] = useState(null);
-  const [filteredProducts, setFilteredProduct] = useState([]);
 
   async function fetchData(){
     try {
-      const [productsResponse, categoriesResponse] = await Promise.all([
-          fetch('https://fakestoreapi.com/products'),
-          fetch('https://fakestoreapi.com/products/categories'),
-        ]);
-      
-         if(!productsResponse.ok || !categoriesResponse.ok){
+      const response = await fetch('https://fakestoreapi.com/products')
+         if(!response.ok){
            throw new Error('Erro');
          }
 
-      const productsData = await productsResponse.json();
-      const categoriesData = await categoriesResponse.json();
-
-    setProdutos(productsData);
-    setCategorias(categoriesData);
-    setFilteredProduct(productsData)  
-      
+    const data = await response.json();
+    setProdutos(data);
     } catch (error) {
-      setError("Erro",error);
+      console.error("Erro:",error);
     }finally {
       setLoading(false);
     }
@@ -37,26 +25,6 @@ const Exercicio16 = () => {
   useEffect(() => {
     fetchData();
   }, [])
-
-
- 
-
-  const handleCategoryChange = (event) => {
-    const category = event.target.value 
-    setSelectedCategory(category);
-
-if (category === ''){
-  setFilteredProduct(produtos);
-} else{
-  const filtered = produtos.filter(product => product.category === category);
-  setFilteredProduct(filtered);
-}
-
-    
-  }
-
-   
-
 
   if (loading) {
     return <div>Loading...</div>;
@@ -70,21 +38,8 @@ if (category === ''){
    return (
       <div>
         <h1>Products List</h1>
-
-        {/* Dropdown*/}
-        <select onChange={handleCategoryChange} defaultValue={selectedCategory}>
-        <option value="" disabled> Selecione um produto</option>
-          {categorias.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
-
-
-
         <ul>
-          {filteredProducts.map((product) => (
+          {produtos.map((product) => (
             <li key={product.id}>
               <h2>{product.title}</h2>
               <p>{product.description}</p>
@@ -96,4 +51,4 @@ if (category === ''){
     );
   };
 
-export default Exercicio16;
+export default Exercicio13;
